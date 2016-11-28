@@ -18,12 +18,8 @@
 #ifndef _ADAFRUIT_DOT_STAR_H_
 #define _ADAFRUIT_DOT_STAR_H_
 
-#if (ARDUINO >= 100)
- #include <Arduino.h>
-#else
- #include <WProgram.h>
- #include <pins_arduino.h>
-#endif
+#include "fsl_dspi.h"
+#include "EmbeddedTypes.h"
 
 // Color-order flag for LED pixels (optional extra parameter to constructor):
 // Bits 0,1 = R index (0-2), bits 2,3 = G index, bits 4,5 = B index
@@ -34,6 +30,36 @@
 #define DOTSTAR_BRG (1 | (2 << 2) | (0 << 4))
 #define DOTSTAR_BGR (2 | (1 << 2) | (0 << 4))
 #define DOTSTAR_MONO 0 // Single-color strip WIP DO NOT USE YET
+
+typedef struct DotStar_obj
+{
+    uint16_t numLEDs;                                // Number of pixels
+    uint8_t
+      brightness,                             // Global brightness setting
+     *pixels,                                 // LED RGB values (3 bytes ea.)
+      rOffset,                                // Index of red in 3-byte pixel
+      gOffset,                                // Index of green byte
+      bOffset;                                // Index of blue byte
+
+      //SPI settings
+      spi_master_handle_t spiHandle;
+      spi_master_config_t masterConfig;
+      SPI_Type spi;
+} DotStar_t;
+
+
+void DotStar_setBrightness(uint8_t);                 // Set global brightness 0-255
+void DotStar_setPixelColor(uint16_t n, uint32_t c);
+void DotStar_setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b);
+void DotStar_show(void);                             // Issue color data to strip
+void DotStar_updatePins(void);                       // Change pin assignments (HW)
+void DotStar_updatePins(uint8_t d, uint8_t c);       // Change pin assignments (SW)
+void DotStar_updateLength(uint16_t n);               // Change length
+uint32_t DotStar_color(uint8_t r, uint8_t g, uint8_t b); // R,G,B to 32-bit color
+uint32_t DotStar_getPixelColor(uint16_t n);        // Return 32-bit pixel color
+uint16_t DotStar_numPixels(void);                        // Return number of pixels
+uint8_t DotStar_getBrightness(void);              // Return global brightness
+uint8_t *DotStar_getPixels(void);                  // Return pixel data pointer
 
 class Adafruit_DotStar {
 

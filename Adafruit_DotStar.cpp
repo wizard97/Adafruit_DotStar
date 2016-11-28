@@ -25,6 +25,7 @@
   ------------------------------------------------------------------------*/
 
 #include "Adafruit_DotStar.h"
+
 #if !defined(__AVR_ATtiny85__)
  #include <SPI.h>
 #endif
